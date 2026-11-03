@@ -75,5 +75,39 @@ function finish(){if(!mode)return;if(mode==='area'&&points.length<3){status('Are
 el('finish').onclick=finish;map.on('dblclick',e=>{if(mode){L.DomEvent.stop(e);finish()}});el('clear').onclick=()=>{finish();clearDrawing()};
 el('reset').onclick=()=>map.setView([35.05,33.1],9);
 el('fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();setTimeout(()=>map.invalidateSize(),250)}catch(e){status('Full screen unavailable: '+e.message)}};
-el('export').onclick=async()=>{if(typeof html2canvas==='undefined'){status('PNG export library unavailable. Check CDN access or use browser screenshot.');return}status('Rendering PNG…');try{const canvas=await html2canvas(el('map'),{useCORS:true,allowTaint:false,backgroundColor:'#e8eee8',logging:false,scale:1});const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw new Error('Unable to encode PNG');const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='cyprus_tree_crowns_'+new Date().toISOString().slice(0,10)+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);status('PNG exported. Check imagery and crown layers in the image.')}catch(e){status('PNG export failed (possibly imagery CORS): '+e.message+'. Use Windows Snipping Tool (Win+Shift+S).')}};
+el('export').onclick = async () => {
+  if (typeof html2canvas === 'undefined') {
+    status('PNG export library unavailable. Check CDN access or use browser screenshot.');
+    return;
+  }
+
+  status('Rendering PNG…');
+
+  try {
+    const canvas = await html2canvas(el('map'), {
+      useCORS: true,
+      allowTaint: false,
+      backgroundColor: '#e8eee8',
+      logging: false,
+      scale: 1
+    });
+
+    const blob = await new Promise(resolve =>
+      canvas.toBlob(resolve, 'image/png')
+    );
+
+    if (!blob) throw new Error('Unable to encode PNG');
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cyprus_tree_crowns.png';
+    a.click();
+
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+    status('PNG exported. Check imagery and crown layers in the image.');
+  } catch (e) {
+    status('PNG export failed: ' + e.message);
+  }
+};
 </script></body></html>
