@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cyprus Tree Crown Inventory</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#1c3029}*{box-sizing:border-box}html,body,#map{height:100%;margin:0}#map{background:#e8eee8}.panel{position:absolute;z-index:1000;top:16px;left:16px;width:min(340px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;background:rgba(255,255,255,.97);border-radius:14px;padding:17px;box-shadow:0 5px 25px #0003}.panel h1{font-size:19px;margin:0 0 3px}.subtitle{font-size:12px;color:#587067;margin:0 0 15px}.section{border-top:1px solid #e2e9e5;padding-top:12px;margin-top:12px}.section h2{font-size:13px;margin:0 0 9px}.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{background:#eff6f0;padding:10px;border-radius:8px}.stat strong{display:block;font-size:18px}.stat span{font-size:11px;color:#52665d}.row{display:flex;gap:7px;align-items:center}.row>*{min-width:0}input[type=text],select{width:100%;padding:9px;border:1px solid #c9d7ce;border-radius:7px;font-size:13px}button{background:#176d49;color:white;border:0;border-radius:7px;padding:9px 11px;cursor:pointer;font-weight:600;font-size:12px}button.secondary{background:#e6eee8;color:#234b36}button:disabled{opacity:.45;cursor:not-allowed}.buttons{display:flex;flex-wrap:wrap;gap:6px}.buttons button.active{background:#a45c1a}.hint{font-size:11px;color:#5a6b61;line-height:1.45}.legend{display:flex;align-items:center;gap:9px;font-size:12px}.swatch{width:17px;height:17px;background:#239747;border:1px solid #13572d;border-radius:3px}.status{font-size:12px;min-height:18px;margin-top:8px;color:#395c46}.map-bottom{position:absolute;z-index:900;bottom:20px;right:10px;background:#fffE;padding:6px 9px;border-radius:7px;font-size:11px;box-shadow:0 2px 10px #0002}.leaflet-control-attribution{max-width:calc(100vw - 40px)}.crown-layer{filter:brightness(0) saturate(100%) invert(39%) sepia(67%) saturate(653%) hue-rotate(91deg) brightness(90%)}@media(max-width:700px){.panel{top:8px;left:8px;max-height:55vh;padding:12px;width:min(310px,calc(100vw - 16px))}.panel h1{font-size:16px}}
+.district-table{width:100%;border-collapse:collapse;font-size:10.5px}.district-table th,.district-table td{padding:6px 3px;text-align:right;border-bottom:1px solid #e2e9e5;white-space:nowrap}.district-table th:first-child,.district-table td:first-child{text-align:left}.district-table th{color:#52665d;font-weight:650}</style></head><body><div id="map"></div><aside class="panel" id="panel">
+<h1>Cyprus Tree Crown Inventory</h1><p class="subtitle">National tree crown map · Interactive research viewer</p>
+<div class="statgrid">
+<div class="stat"><strong>18.68 M</strong><span>Mapped trees</span></div>
+<div class="stat"><strong>602 km²</strong><span>National crown area</span></div>
+<div class="stat"><strong>10.38 M</strong><span>Forest trees</span></div>
+<div class="stat"><strong>414.33 km²</strong><span>Forest crown area</span></div>
+<div class="stat"><strong>11%</strong><span>National tree crown coverage</span></div>
+<div class="stat"><strong>6.13 M</strong><span>Forest trees with crown area &gt; 3 m²</span></div>
+<div class="stat"><strong>17.04 Mt</strong><span>Estimated forest biomass</span></div>
+<div class="stat"><strong>8.1 Mt C</strong><span>Estimated forest carbon stock</span></div>
+</div>
+<div class="section"><h2>District tree inventory</h2>
+<table class="district-table"><thead><tr><th>District</th><th>Trees</th><th>Crown area</th><th>Cover</th></tr></thead><tbody>
+<tr><td>Nicosia</td><td>7,921,824</td><td>283.25 km²</td><td>10.4%</td></tr>
+<tr><td>Limassol</td><td>4,068,249</td><td>127.48 km²</td><td>9.1%</td></tr>
+<tr><td>Paphos</td><td>4,719,797</td><td>151.77 km²</td><td>10.9%</td></tr>
+<tr><td>Larnaca</td><td>1,536,788</td><td>34.67 km²</td><td>3.1%</td></tr>
+<tr><td>Famagusta</td><td>435,925</td><td>4.43 km²</td><td>~1%</td></tr>
+</tbody></table><p class="hint">Published district-wide inventory estimates (Table 3), not live map-view calculations.</p></div>
+<div class="section"><h2>Wildfire impacts (since 2014)</h2><div class="statgrid">
+<div class="stat"><strong>360,000</strong><span>Trees affected</span></div>
+<div class="stat"><strong>6.8 km²</strong><span>Affected crown area</span></div>
+<div class="stat"><strong>300,000 t</strong><span>Estimated biomass loss</span></div>
+<div class="stat"><strong>140,648 t C</strong><span>Estimated carbon stock loss</span></div>
+</div><p class="hint">Historical estimates from the paper, not a live fire layer.</p></div>
+<div class="section"><h2>Layers</h2><label class="row" style="font-size:13px"><input id="crownsToggle" type="checkbox" checked> Show tree crowns</label><div class="row" style="margin-top:9px"><label for="opacity" style="font-size:12px;white-space:nowrap">Opacity</label><input id="opacity" type="range" min="0" max="100" value="80" style="flex:1"><output id="opacityValue">80%</output></div><div class="legend" style="margin-top:10px"><span class="swatch"></span><span>Segmented tree crown masks</span></div><p class="hint">Crown tiles: zoom 7–16; higher zoom uses enlarged tiles. If crowns are missing, press F12 and check for 404 tile requests.</p></div>
+<div class="section"><h2>Find a location</h2><div class="row"><select id="place"><option value="">Select a city / district</option><option value="35.1856,33.3823">Nicosia</option><option value="34.6786,33.0413">Limassol</option><option value="34.917,33.629">Larnaca</option><option value="34.7754,32.4218">Paphos</option><option value="35.117,33.95">Famagusta</option><option value="34.923,32.864">Troodos</option><option value="35.038,32.424">Polis</option><option value="34.989,34.001">Ayia Napa</option></select><button id="goPlace">Go</button></div><p class="hint">Or enter latitude, longitude in decimal degrees:</p><div class="row"><input type="text" id="coords" placeholder="35.05, 33.10" aria-label="Latitude and longitude"><button id="goCoords">Go</button></div></div>
+<div class="section"><h2>Measure on map</h2><div class="buttons"><button id="distance" class="secondary">Distance</button><button id="area" class="secondary">Area</button><button id="finish" class="secondary">Finish</button><button id="clear" class="secondary">Clear</button></div><p class="hint">Choose Distance or Area, then click map points. Double-click or press Finish to complete. Measurements are approximate, not cadastral.</p><div id="measureResult" class="status" aria-live="polite">No measurement active.</div></div>
+<div class="section"><h2>Display and export</h2><div class="buttons"><button id="fullscreen">Full screen</button><button id="export">Export PNG</button><button id="reset" class="secondary">Reset view</button></div><p class="hint">PNG export requires imagery servers to permit cross-origin image capture. If Esri blocks it, use your browser's screenshot feature.</p><div id="status" class="status" aria-live="polite"></div></div>
+<div class="section hint">Statistics: Zenonos, Sciare &amp; Ciais (2026), <em>Remote Sensing Applications: Society and Environment</em> 43, 102122. <a href="https://doi.org/10.1016/j.rsase.2026.102122" target="_blank" rel="noopener">DOI</a>. Values are published study-wide estimates, not recalculated for the current map view. Imagery © Esri and its data providers. Crown inventory based on 2014 aerial imagery (50 cm).</div>
+</aside><div class="map-bottom" id="position">Move pointer over map for coordinates</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+'use strict';
+const map=L.map('map',{doubleClickZoom:false,zoomControl:false}).setView([35.05,33.1],9);
+L.control.zoom({position:'topright'}).addTo(map);
+const satellite=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,crossOrigin:'anonymous',attribution:'Imagery © Esri and its data providers'}).addTo(map);
+// Keep the exact original XYZ tile path and do not impose CORS on local crown images.
+// A dedicated pane ensures the crowns always appear above the satellite basemap.
+map.createPane('treeCrowns');
+map.getPane('treeCrowns').style.zIndex='450';
+const crowns=L.tileLayer('tiles/{z}/{x}/{y}.png',{
+  pane:'treeCrowns', minZoom:7, maxZoom:19, maxNativeZoom:16,
+  opacity:0.8, className:'crown-layer', attribution:'Tree crown masks',
+  errorTileUrl:''
+}).addTo(map);
+let crownLoaded=0, crownErrors=0;
+crowns.on('tileload',()=>{crownLoaded++; if(crownLoaded===1) status('Crown tiles are loading. Zoom in if crowns are too small at country scale.');});
+crowns.on('tileerror',e=>{crownErrors++; if(crownErrors<=3) {console.warn('Crown tile failed:',e.tile?.src);status('Crown tile not found or unreadable. Check tiles/ folder and browser Console (F12).');}});
+
+L.control.scale({imperial:false,position:'bottomright'}).addTo(map);
+const el=id=>document.getElementById(id);const status=msg=>el('status').textContent=msg;
+el('opacity').addEventListener('input',e=>{crowns.setOpacity(Number(e.target.value)/100);el('opacityValue').textContent=e.target.value+'%'});
+el('crownsToggle').addEventListener('change',e=>e.target.checked?crowns.addTo(map):map.removeLayer(crowns));
+function go(raw){const parts=raw.split(/[,;\s]+/).filter(Boolean).map(Number);if(parts.length!==2||parts.some(n=>!Number.isFinite(n))||Math.abs(parts[0])>90||Math.abs(parts[1])>180){status('Enter valid latitude, longitude, e.g. 35.05, 33.10');return}map.setView(parts,Math.max(14,map.getZoom()));status('Centered at '+parts[0].toFixed(5)+', '+parts[1].toFixed(5))}
+el('goCoords').onclick=()=>go(el('coords').value.trim());el('coords').addEventListener('keydown',e=>{if(e.key==='Enter')go(e.target.value.trim())});el('goPlace').onclick=()=>{if(el('place').value)go(el('place').value)};
+map.on('mousemove',e=>el('position').textContent=e.latlng.lat.toFixed(5)+'°, '+e.latlng.lng.toFixed(5)+'°');
+let mode=null,points=[],drawing=null,markers=L.layerGroup().addTo(map);
+function clearDrawing(){if(drawing)map.removeLayer(drawing);drawing=null;markers.clearLayers();points=[];el('measureResult').textContent='No measurement active.'}
+function choose(m){clearDrawing();mode=m;el('distance').classList.toggle('active',m==='distance');el('area').classList.toggle('active',m==='area');el('measureResult').textContent=m==='distance'?'Click points to measure a route.':'Click at least 3 points to measure an area.';map.getContainer().style.cursor='crosshair'}
+el('distance').onclick=()=>choose('distance');el('area').onclick=()=>choose('area');
+function dist(a,b){const R=6371008.8,r=Math.PI/180,dlat=(b.lat-a.lat)*r,dlon=(b.lng-a.lng)*r,x=Math.sin(dlat/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dlon/2)**2;return 2*R*Math.asin(Math.min(1,Math.sqrt(x)))}
+function areaSqM(ps){if(ps.length<3)return 0;const R=6371008.8,r=Math.PI/180;let sum=0;for(let i=0;i<ps.length;i++){const a=ps[i],b=ps[(i+1)%ps.length];let d=(b.lng-a.lng)*r;if(d>Math.PI)d-=2*Math.PI;if(d< -Math.PI)d+=2*Math.PI;sum+=d*(2+Math.sin(a.lat*r)+Math.sin(b.lat*r))}return Math.abs(sum)*R*R/2}
+function redraw(){if(drawing)map.removeLayer(drawing);if(!points.length)return;drawing=mode==='area'&&points.length>=3?L.polygon(points,{color:'#ef9b28',weight:3,fillOpacity:.18}).addTo(map):L.polyline(points,{color:'#ef9b28',weight:3}).addTo(map);if(mode==='distance'){let total=0;for(let i=1;i<points.length;i++)total+=dist(points[i-1],points[i]);el('measureResult').textContent='Distance: '+(total>=1000?(total/1000).toFixed(3)+' km':total.toFixed(1)+' m')}else{const a=areaSqM(points);el('measureResult').textContent=points.length<3?'Add '+(3-points.length)+' more point(s).':'Area: '+(a>=1e6?(a/1e6).toFixed(4)+' km²':a.toFixed(1)+' m²')+' ('+(a/10000).toFixed(3)+' ha)'}}
+map.on('click',e=>{if(!mode)return;points.push(e.latlng);L.circleMarker(e.latlng,{radius:4,color:'#c97b16',fillColor:'#fff',fillOpacity:1}).addTo(markers);redraw()});
+function finish(){if(!mode)return;if(mode==='area'&&points.length<3){status('Area measurement needs at least three points.');return}mode=null;map.getContainer().style.cursor='';el('distance').classList.remove('active');el('area').classList.remove('active')}
+el('finish').onclick=finish;map.on('dblclick',e=>{if(mode){L.DomEvent.stop(e);finish()}});el('clear').onclick=()=>{finish();clearDrawing()};
+el('reset').onclick=()=>map.setView([35.05,33.1],9);
+el('fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();setTimeout(()=>map.invalidateSize(),250)}catch(e){status('Full screen unavailable: '+e.message)}};
+el('export').onclick=async()=>{if(typeof html2canvas==='undefined'){status('PNG export library unavailable. Check CDN access or use browser screenshot.');return}status('Rendering PNG…');try{const canvas=await html2canvas(el('map'),{useCORS:true,allowTaint:false,backgroundColor:'#e8eee8',logging:false,scale:1});const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw new Error('Unable to encode PNG');const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='cyprus_tree_crowns_'+new Date().toISOString().slice(0,10)+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);status('PNG exported. Check imagery and crown layers in the image.')}catch(e){status('PNG export failed (possibly imagery CORS): '+e.message+'. Use Windows Snipping Tool (Win+Shift+S).')}};
+</script></body></html>
