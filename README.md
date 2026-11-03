@@ -1,0 +1,1 @@
+# Cyprus-tree-cover-map---created-by-Zenonos-et-al.-2026
